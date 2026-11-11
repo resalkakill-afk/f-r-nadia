@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Для тебя ♥</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        html, body {
+            background: #0a0308;
+            height: 100%;
+            width: 100%;
+            font-family: 'Georgia', 'Times New Roman', serif;
+            overflow: hidden;
+        }
+
+        #intro-overlay {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            background: #0a0308;
+            padding: 20px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .intro-box {
+            position: relative;
+            background: linear-gradient(160deg, #240916, #12040c 60%, #1a0710);
+            border: 1.5px solid #ff8fb8;
+            border-radius: 28px;
+            padding: 2.4rem 2.2rem 2.4rem;
+            box-shadow:
+                0 0 40px rgba(255, 107, 157, 0.5),
+                0 0 100px rgba(255, 60, 130, 0.18),
+                0 0 20px rgba(255, 107, 157, 0.35) inset;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.3rem;
+            animation: boxGlow 2.6s infinite alternate;
+            width: 100%;
+            max-width: 380px;
+            z-index: 2;
+        }
+
+        @keyframes boxGlow {
+            0% { box-shadow: 0 0 30px rgba(255, 107, 157, 0.4), 0 0 80px rgba(255, 60, 130, 0.12), 0 0 14px rgba(255, 107, 157, 0.25) inset; }
+            100% { box-shadow: 0 0 55px rgba(255, 107, 157, 0.7), 0 0 130px rgba(255, 60, 130, 0.25), 0 0 26px rgba(255, 107, 157, 0.5) inset; }
+        }
+
+        .emblem {
+            font-size: 3.2rem;
+            line-height: 1;
+            color: #ff4d88;
+            text-shadow:
+                0 0 18px rgba(255, 77, 136, 0.95),
+                0 0 42px rgba(255, 77, 136, 0.7),
+                0 0 70px rgba(255, 77, 136, 0.4);
+            animation: emblemBeat 1.3s infinite;
+        }
+
+        @keyframes emblemBeat {
+            0%, 100% { transform: scale(1); }
+            20% { transform: scale(1.18); }
+            40% { transform: scale(0.96); }
+            60% { transform: scale(1.1); }
+            80% { transform: scale(1); }
+        }
+
+        .intro-title {
+            color: #ffd6e6;
+            font-size: 1.65rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-align: center;
+            text-shadow:
+                0 0 14px rgba(255, 107, 157, 0.9),
+                0 0 34px rgba(255, 107, 157, 0.55);
+            line-height: 1.3;
+        }
+
+        .intro-text {
+            color: #ffb3cc;
+            font-size: 1rem;
+            line-height: 1.7;
+            text-align: center;
+            font-style: italic;
+            text-shadow: 0 0 10px rgba(255, 107, 157, 0.55);
+            max-width: 300px;
+        }
+
+        .intro-text .hl {
+            color: #ff6b9d;
+            font-style: normal;
+            font-weight: 700;
+            text-shadow: 0 0 14px rgba(255, 107, 157, 0.9);
+        }
+
+        .continue-btn {
+            display: block;
+            width: 100%;
+            max-width: 270px;
+            margin-top: 0.6rem;
+            padding: 17px 22px;
+            background: #ff6b9d;
+            color: #2a0612;
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            font-family: 'Georgia', serif;
+            border: none;
+            border-radius: 40px;
+            cursor: pointer;
+            box-shadow: 0 0 24px rgba(255, 107, 157, 0.55);
+            -webkit-appearance: none;
+            appearance: none;
+            -webkit-user-select: none;
+            user-select: none;
+            touch-action: manipulation;
+            position: relative;
+            z-index: 50;
+            outline: none;
+        }
+
+        .continue-btn:active {
+            background: #ff4d88;
+            box-shadow: 0 0 50px rgba(255, 107, 157, 1);
+        }
+
+        .continue-btn .btn-heart {
+            display: inline-block;
+            margin-left: 0.5rem;
+            font-size: 1.15rem;
+        }
+
+        .signature {
+            color: rgba(255, 179, 204, 0.55);
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            font-style: italic;
+            text-shadow: 0 0 6px rgba(255, 107, 157, 0.4);
+            margin-top: 0.2rem;
+        }
+
+        .hint {
+            display: none;
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ff6b9d;
+            color: #2a0612;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            z-index: 9999;
+            box-shadow: 0 0 30px rgba(255, 107, 157, 0.8);
+            animation: hintPulse 1s infinite alternate;
+            text-align: center;
+            max-width: 90%;
+        }
+
+        .hint.show { display: block; }
+
+        @keyframes hintPulse {
+            0% { box-shadow: 0 0 20px rgba(255, 107, 157, 0.6); }
+            100% { box-shadow: 0 0 40px rgba(255, 107, 157, 1); }
+        }
+
+        #alert-main {
+            position: fixed;
+            inset: 0;
+            display: none;
+            background: #000;
+            overflow: hidden;
+            z-index: 10;
+            animation: screenShake 0.08s infinite;
+        }
+
+        @keyframes screenShake {
+            0% { transform: translate(0, 0); }
+            20% { transform: translate(-4px, 3px); }
+            40% { transform: translate(4px, -2px); }
+            60% { transform: translate(-3px, -4px); }
+            80% { transform: translate(3px, 4px); }
+            100% { transform: translate(0, 0); }
+        }
+
+        #alert-canvas {
+            position: absolute;
+            inset: 0;
+            display: block;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+        }
+
+        .alert-title {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: clamp(2.6rem, 14vw, 9rem);
+            font-weight: 900;
+            color: #ff0000;
+            text-shadow: 0 0 25px #f00, 0 0 60px #f00, 0 0 110px #f00;
+            letter-spacing: 6px;
+            white-space: nowrap;
+            z-index: 20;
+            font-family: 'Courier New', monospace;
+            text-transform: uppercase;
+            text-align: center;
+            width: 90%;
+            line-height: 1.15;
+            pointer-events: none;
+            animation: alarmFlash 0.18s infinite alternate, titleGlow 0.3s infinite alternate;
+            mix-blend-mode: screen;
+        }
+
+        @keyframes alarmFlash {
+            0% { opacity: 1; color: #ff0000; text-shadow: 0 0 30px #f00, 0 0 70px #f00, 0 0 130px #f00; }
+            100% { opacity: 0.25; color: #330000; text-shadow: 0 0 10px #500, 0 0 20px #300; }
+        }
+
+        @keyframes titleGlow {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            100% { transform: translate(-50%, -50%) scale(1.03); }
+        }
+
+        .noise-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 15;
+            pointer-events: none;
+            opacity: 0.18;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.9'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            background-size: 180px 180px;
+            animation: noiseJitter 0.05s infinite;
+            mix-blend-mode: overlay;
+        }
+
+        @keyframes noiseJitter {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(-3px, 2px); }
+            50% { transform: translate(2px, -3px); }
+            75% { transform: translate(-2px, -2px); }
+            100% { transform: translate(3px, 3px); }
+        }
+
+        .flash-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 12;
+            pointer-events: none;
+            background: radial-gradient(circle at 50% 50%, rgba(255,0,0,0.35) 0%, rgba(0,0,0,0.9) 80%);
+            animation: flashPulse 0.25s infinite alternate;
+            mix-blend-mode: screen;
+        }
+
+        @keyframes flashPulse {
+            0% { opacity: 0.15; }
+            100% { opacity: 0.55; }
+        }
+
+        .scanlines {
+            position: absolute;
+            inset: 0;
+            z-index: 11;
+            pointer-events: none;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(255, 0, 0, 0.08) 0px,
+                rgba(255, 0, 0, 0.08) 2px,
+                transparent 2px,
+                transparent 6px
+            );
+            animation: scanMove 0.4s infinite linear;
+        }
+
+        @keyframes scanMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 12px; }
+        }
+
+        @media (max-width: 600px) {
+            .intro-box { padding: 2rem 1.5rem 2.1rem; max-width: 320px; gap: 1.1rem; }
+            .emblem { font-size: 2.6rem; }
+            .intro-title { font-size: 1.35rem; }
+            .intro-text { font-size: 0.92rem; line-height: 1.6; }
+            .continue-btn { padding: 16px 18px; font-size: 1rem; letter-spacing: 2px; }
+            .alert-title { white-space: normal; font-size: 2.6rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Окно приветствия — тап в ЛЮБОМ месте работает -->
+    <div id="intro-overlay"
+         onclick="window.__goAlert && window.__goAlert()"
+         ontouchstart="window.__goAlert && window.__goAlert()"
+         ontouchend="window.__goAlert && window.__goAlert()"
+         onpointerdown="window.__goAlert && window.__goAlert()">
+
+        <div class="intro-box" onclick="event.stopPropagation(); window.__goAlert && window.__goAlert();">
+            <div class="emblem">♥</div>
+
+            <div class="intro-title">Привет, милая ♡</div>
+
+            <div class="intro-text">
+                У меня для тебя <span class="hl">маленький сюрприз</span>...<br>
+                Только не пугайся — нажми на кнопку ниже ♥
+            </div>
+
+            <!-- Кнопка с 3 независимыми обработчиками прямо в HTML -->
+            <button type="button"
+                    class="continue-btn"
+                    id="continueBtn"
+                    onclick="window.__goAlert && window.__goAlert(); event.stopPropagation();"
+                    ontouchstart="window.__goAlert && window.__goAlert(); event.stopPropagation();"
+                    onpointerdown="window.__goAlert && window.__goAlert(); event.stopPropagation();">
+                Продолжить<span class="btn-heart">♥</span>
+            </button>
+
+            <div class="signature">сделано с любовью ♡</div>
+        </div>
+    </div>
+
+    <!-- Подсказка -->
+    <div class="hint" id="hint">
+        Нажми в любом месте экрана ♥
+    </div>
+
+    <!-- Главный экран -->
+    <div id="alert-main">
+        <canvas id="alert-canvas"></canvas>
+        <div class="flash-overlay"></div>
+        <div class="scanlines"></div>
+        <div class="noise-overlay"></div>
+        <div class="alert-title">ВАС ЗАМЕТИЛИ</div>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            const introOverlay = document.getElementById('intro-overlay');
+            const alertMain = document.getElementById('alert-main');
+            const canvas = document.getElementById('alert-canvas');
+            const ctx = canvas.getContext('2d');
+            const hint = document.getElementById('hint');
+
+            let animationFrame = null;
+            let alertActive = false;
+            let drops = [];
+            let columns = 0;
+            let fontSize = 16;
+            let triggered = false;
+
+            const CHAR_SET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz@#$%&*+=?<>{}[]~^!№;%:?*()_+';
+
+            // Главная функция перехода
+            window.__goAlert = function() {
+                if (triggered) return;
+                triggered = true;
+                hint.classList.remove('show');
+                introOverlay.style.display = 'none';
+                alertMain.style.display = 'block';
+                startAlertAnimation();
+            };
+
+            // Дополнительные обработчики через JS (на случай если inline не сработал)
+            const btn = document.getElementById('continueBtn');
+            btn.addEventListener('click', window.__goAlert);
+            btn.addEventListener('touchend', window.__goAlert);
+            btn.addEventListener('pointerup', window.__goAlert);
+
+            // Тап в любом месте документа — тоже переход
+            document.addEventListener('click', window.__goAlert);
+            document.addEventListener('touchend', window.__goAlert);
+            document.addEventListener('pointerup', window.__goAlert);
+
+            // Подсказка через 3 секунды
+            setTimeout(() => {
+                if (!triggered) {
+                    hint.classList.add('show');
+                }
+            }, 3000);
+
+            // ---------- ТРЕВОЖНАЯ АНИМАЦИЯ ----------
+            function initAlertCanvas() {
+                resizeCanvas();
+                const width = window.innerWidth;
+                fontSize = Math.max(12, Math.floor(width / 70));
+                columns = Math.floor(width / fontSize) + 3;
+                drops = new Array(columns).fill(1).map(() => Math.random() * -80);
+            }
+
+            function resizeCanvas() {
+                const w = window.innerWidth;
+                const h = window.innerHeight;
+                canvas.width = w;
+                canvas.height = h;
+                fontSize = Math.max(12, Math.floor(w / 70));
+                const newColumns = Math.floor(w / fontSize) + 3;
+                if (newColumns !== columns) {
+                    const oldDrops = drops;
+                    columns = newColumns;
+                    drops = new Array(columns).fill(1).map((_, i) => {
+                        return oldDrops && oldDrops[i] !== undefined ? oldDrops[i] : Math.random() * -80;
+                    });
+                } else if (drops.length !== columns) {
+                    drops = new Array(columns).fill(1).map(() => Math.random() * -80);
+                }
+            }
+
+            function drawAlert() {
+                if (!alertActive) return;
+
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.12)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.font = `bold ${fontSize}px 'Courier New', monospace`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+
+                for (let i = 0; i < drops.length; i++) {
+                    const char = CHAR_SET[Math.floor(Math.random() * CHAR_SET.length)];
+                    const x = i * fontSize + fontSize / 2;
+                    const y = drops[i] * fontSize;
+
+                    if (Math.random() < 0.1) {
+                        ctx.fillStyle = '#ffb0b0';
+                        ctx.shadowColor = '#ff0000';
+                        ctx.shadowBlur = 22;
+                    } else {
+                        const r = 200 + Math.floor(Math.random() * 55);
+                        const g = Math.floor(Math.random() * 40);
+                        const b = Math.floor(Math.random() * 40);
+                        ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+                        ctx.shadowColor = '#ff0000';
+                        ctx.shadowBlur = 14;
+                    }
+
+                    ctx.fillText(char, x, y);
+                    ctx.shadowBlur = 0;
+
+                    drops[i] += 0.8 + Math.random() * 1.2;
+
+                    if (y > canvas.height + fontSize * 2 && Math.random() > 0.96) {
+                        drops[i] = 0;
+                    }
+                }
+
+                for (let k = 0; k < 12; k++) {
+                    if (Math.random() < 0.5) {
+                        const x = Math.random() * canvas.width;
+                        const y = Math.random() * canvas.height;
+                        ctx.font = `${fontSize * (0.7 + Math.random() * 1.2)}px 'Courier New', monospace`;
+                        ctx.fillStyle = `rgba(255, ${Math.floor(Math.random() * 80)}, ${Math.floor(Math.random() * 80)}, ${0.2 + Math.random() * 0.5})`;
+                        ctx.shadowBlur = 25;
+                        ctx.shadowColor = '#ff0000';
+                        const randChar = CHAR_SET[Math.floor(Math.random() * CHAR_SET.length)];
+                        ctx.fillText(randChar, x, y);
+                        ctx.shadowBlur = 0;
+                    }
+                }
+
+                animationFrame = requestAnimationFrame(drawAlert);
+            }
+
+            function startAlertAnimation() {
+                if (alertActive) return;
+                alertActive = true;
+                initAlertCanvas();
+                if (animationFrame) cancelAnimationFrame(animationFrame);
+                animationFrame = requestAnimationFrame(drawAlert);
+            }
+
+            function stopAlertAnimation() {
+                alertActive = false;
+                if (animationFrame) {
+                    cancelAnimationFrame(animationFrame);
+                    animationFrame = null;
+                }
+                if (ctx && canvas) {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
+            }
+
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    e.preventDefault();
+                    stopAlertAnimation();
+                    alertMain.style.display = 'none';
+                    introOverlay.style.display = 'flex';
+                    if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    triggered = false;
+                    hint.classList.remove('show');
+                }
+            });
+
+            window.addEventListener('resize', () => {
+                if (alertActive) {
+                    const oldDrops = drops;
+                    resizeCanvas();
+                    if (oldDrops && oldDrops.length) {
+                        for (let i = 0; i < drops.length; i++) {
+                            drops[i] = oldDrops[i] !== undefined ? oldDrops[i] : Math.random() * -80;
+                        }
+                    }
+                }
+            });
+
+            (function initialCanvasSetup() {
+                if (canvas && ctx) {
+                    canvas.width = window.innerWidth;
+                    canvas.height = window.innerHeight;
+                }
+            })();
+
+        })();
+    </script>
+</body>
+</html>
